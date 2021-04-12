@@ -56,6 +56,7 @@ int main(int argc, char** argv) {
 
 void setDefaults() {
 	// scene Information
+	drawMode = 0;
 	centerPos.set(1.0f, -2.0f, -5.0f);
 	angleX = 0.0f;
 	angleY = 0.0f;
@@ -172,7 +173,7 @@ void renderScene() {
 	// draw objects
 	glEnable(GL_LIGHTING);
 	glColor3f(0.2,0.5,0.8);
-	trimesh.draw();
+	trimesh.draw(drawMode);
   // swap buffers
 	glutSwapBuffers();
 }
@@ -205,6 +206,14 @@ void keyPressed(unsigned char key, int x, int y) {
 	case 'L' :
 		moveLight = !moveLight;
 		break;
+	case 'm':
+	case 'M':
+		drawMode += 1;
+		if (drawMode >= 2)
+		{
+			drawMode = 0;
+		}
+		std::cout << "drawMode switched to " << drawMode << std::endl;
 	}
 }
 
@@ -249,6 +258,7 @@ void coutHelp()
 	cout << "H: show this (H)elp file" << endl;
 	cout << "R: (R)eset view" << endl;
 	cout << "L: toggle (L)ight movement" << endl;
+	cout << "M: toggle draw (M)ode" << endl;
 	cout << "==========================" << endl;
 	cout << endl;
 }

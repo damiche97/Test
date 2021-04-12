@@ -81,7 +81,10 @@ public:
   // ==============
   
   // draw mesh with set transformation
-  void draw();
+  void draw(int& drawMode);
+  void drawImmediate();
+  void drawArray();
+
 
 };
 

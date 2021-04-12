@@ -228,7 +228,19 @@ void TriangleMesh::loadOBJ(const char* filename) {
 // === RENDER ===
 // ==============
 
-void TriangleMesh::draw() {
+void TriangleMesh::draw(int& drawMode) {
+    switch (drawMode)
+    {
+    case 0:
+        drawImmediate();
+    case 1:
+        drawArray();
+    default:
+        break;
+    }
+}
+
+void TriangleMesh::drawImmediate() {
   if (triangles.size() == 0) return;
   // TODO: draw triangles with immediate mode
   glBegin(GL_TRIANGLES);
@@ -243,4 +255,19 @@ void TriangleMesh::draw() {
       glVertex3f(vertices[triangles[i].z].x, vertices[triangles[i].z].y, vertices[triangles[i].z].z);
   }
   glEnd();
+}
+
+void TriangleMesh::drawArray() {
+    // Enabling Drawing Arrays
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    // Pointers to the vertices and normals data
+    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), vertices.data());
+    glNormalPointer(GL_FLOAT, sizeof(Normal), normals.data());
+    // drawing the elements
+    glDrawElements(GL_TRIANGLES, triangles.size()*3, GL_UNSIGNED_INT, triangles.data());
+
+    // We disable normal and vertex arrays again
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
 }

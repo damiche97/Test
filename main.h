@@ -32,6 +32,8 @@ bool moveLight;
 // mouse information
 int mouseX, mouseY, mouseButton;
 float mouseSensitivy;
+// drawMode
+int drawMode;
 // object
 TriangleMesh trimesh;
 
