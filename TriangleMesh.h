@@ -14,6 +14,7 @@
 
 #include <vector>
 #include "Vec3.h"
+#include <GL/glut.h>
 
 #define M_PI 3.14159265358979f
 
@@ -42,6 +43,16 @@ private:
   // Texture indices used for each triangle
   TriTextures triTextures;
   unsigned int textureID;
+
+  vector<GLfloat> global_ambient; // = { 0.1f, 0.1f, 0.1f, 1.0f };
+  vector<GLfloat> ambientLight; // = { 0.1f, 0.1f, 0.1f, 1.0f };
+  vector<GLfloat> diffuseLight; // = { 1.0f, 1.0f, 1.0f, 1.0f };
+  vector<GLfloat> specularLight; // = { 1.0f, 1.0f, 1.0f, 1.0f };
+  vector<GLfloat> specularLightMaterial; // [] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  GLfloat shininessMaterial;
+  GLfloat shininess;
+
+  
 
   // private methods
   void calculateNormals();
@@ -90,6 +101,7 @@ public:
   // ==============
   
   // draw mesh with set transformation
+  void draw_settings();
   void draw(int& drawMode);
   void drawImmediate();
   void drawArray();

@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <float.h>
-#include <GL/glut.h>
+// #include <GL/glut.h>
 #include "TriangleMesh.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -52,7 +52,22 @@ void TriangleMesh::calculateNormals() {
 }
 
 TriangleMesh::TriangleMesh() {
-  clear();
+    clear();
+    // set lighting and material
+    /*
+    GLfloat global_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat shininess;
+    */
+    global_ambient = { 0.1f, 0.1f, 0.1f, 0.1f };
+    ambientLight = { 0.1f, 0.1f, 0.1f, 0.1f };
+    diffuseLight = { 1.0f, 1.0f, 1.0f, 1.0f };
+    specularLight = { 1.0f, 1.0f, 1.0f, 1.0f };
+    shininess = 128.0f;
+    specularLightMaterial = { 1.0f, 1.0f, 1.0f, 1.0f };
+    shininessMaterial = 128.0f;
 }
 
 TriangleMesh::~TriangleMesh() {
@@ -262,7 +277,29 @@ void TriangleMesh::loadTexture(const char* filename) {
 // === RENDER ===
 // ==============
 
+void TriangleMesh::draw_settings() {
+    // enable depth buffer
+    glEnable(GL_DEPTH_TEST);
+    // set shading model
+    glShadeModel(GL_SMOOTH);
+    // Lightning settings
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, &global_ambient[0]);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, &ambientLight[0]);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, &diffuseLight[0]);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, &specularLight[0]);
+    glLightf(GL_LIGHT0, GL_SHININESS, shininess);
+
+    glEnable(GL_LIGHT0);
+    // enable use of glColor instead of glMaterial for ambient and diffuse property
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    // white shiny specular highlights
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininessMaterial);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specularLightMaterial[0]);
+}
+
 void TriangleMesh::draw(int& drawMode) {
+    draw_settings();
     switch (drawMode)
     {
     case 0:
@@ -276,7 +313,7 @@ void TriangleMesh::draw(int& drawMode) {
 
 void TriangleMesh::drawImmediate() {
   if (triangles.size() == 0) return;
-  // TODO: draw triangles with immediate mode
+  // Enable Texture
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, textureID);
 

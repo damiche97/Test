@@ -78,30 +78,23 @@ void setDefaults() {
 void initialize() {
 	// black screen
 	glClearColor(0,0,0,0);
-	// enable depth buffer
-	glEnable(GL_DEPTH_TEST);
-	// set shading model
-	glShadeModel(GL_SMOOTH);
+	
+	
 	// set lighting and material
-	GLfloat global_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };	
-	GLfloat ambientLight[] =   { 0.1f, 0.1f, 0.1f, 1.0f };
-	GLfloat diffuseLight[] =   { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat specularLight[] =  { 1.0f, 1.0f, 1.0f, 1.0f };
+	/*
+	GLfloat global_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat shininess = 128.0f;
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
 	glLightf(GL_LIGHT0, GL_SHININESS, shininess);
-	glEnable(GL_LIGHT0);
-	// enable use of glColor instead of glMaterial for ambient and diffuse property
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    // white shiny specular highlights
-    GLfloat specularLightMaterial[] =  { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat shininessMaterial = 128.0f;
-    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shininessMaterial);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR, specularLightMaterial);
+	*/
+
+	
 
 	// keybindings => cout
 	coutHelp();
@@ -175,7 +168,8 @@ void renderScene() {
 	drawLight();
 	// draw objects
 	glEnable(GL_LIGHTING);
-	glColor3f(0.2,0.5,0.8);
+	glColor3f(1.0,1.0,1.0);
+	//glColor3f(0.2, 0.5, 0.8);
 	trimesh.draw(drawMode);
   // swap buffers
 	glutSwapBuffers();
