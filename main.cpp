@@ -43,9 +43,12 @@ int main(int argc, char** argv) {
     //trimesh.loadOFF(filename); 
 	//char* filename = "Modelle/spiral_staircase_.obj";
 	char* filename = "Modelle/Medieval tower_High.obj";
+	char* texture = "Modelle/textures/Medieval tower_mid_Col.jpg";
 	//char* filename = "Modelle/bugatti.obj";
 	
 	trimesh.loadOBJ(filename);
+	unsigned int text_id;
+	trimesh.loadTexture(texture);
 
 
 	// activate main loop

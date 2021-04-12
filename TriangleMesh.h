@@ -30,11 +30,18 @@ private:
   typedef vector<Triangle> Triangles;
   typedef vector<Normal> Normals;
   typedef vector<Vertex> Vertices;  
+  typedef vector<pair<float, float>> Textures;
+  typedef vector<Vec3i> TriTextures;
 
   // data of TriangleMesh
   Vertices vertices;
   Normals normals;
   Triangles triangles;
+  //avilable texture points
+  Textures textures;
+  // Texture indices used for each triangle
+  TriTextures triTextures;
+  unsigned int textureID;
 
   // private methods
   void calculateNormals();
@@ -75,6 +82,8 @@ public:
 
   // read OBJ file
   void loadOBJ(const char* filename);
+
+  void TriangleMesh::loadTexture(const char* filename);
 
   // ==============
   // === RENDER ===

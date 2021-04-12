@@ -16,7 +16,15 @@
 #include <GL/glut.h>
 #include "TriangleMesh.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include <cassert>
+
+
+// ===============================
+// === CONSTRUCTOR, DESTRUCTOR ===
+// ===============================
 
 void TriangleMesh::calculateNormals() {
   normals.resize(vertices.size());
@@ -42,10 +50,6 @@ void TriangleMesh::calculateNormals() {
 	 (*nit).normalize();
    }
 }
-
-// ===============================
-// === CONSTRUCTOR, DESTRUCTOR ===
-// ===============================
 
 TriangleMesh::TriangleMesh() {
   clear();
@@ -193,6 +197,12 @@ void TriangleMesh::loadOBJ(const char* filename) {
             //vertices.push_back(Vertex{ nx,ny,nz });
             // muss überarbeitet werden
         }
+        else if (block == "vt") {
+            float u, v;
+            in >> u;
+            in >> v;
+            textures.push_back({ u, v });
+        }
         else if (block == "f") {
             //string v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3;
             string v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3;// v4, vt4, vn4;
@@ -216,6 +226,7 @@ void TriangleMesh::loadOBJ(const char* filename) {
             //std::getline(in, vn4);
             
             triangles.push_back(Triangle{ std::stoi(v1) - 1,std::stoi(v2) - 1,std::stoi(v3) - 1 });
+            triTextures.push_back(Vec3i{ std::stoi(vt1) - 1,std::stoi(vt2) - 1,std::stoi(vt3) - 1 });
             //triangles.push_back(Triangle{ std::stoi(v3) - 1,std::stoi(v4) - 1,std::stoi(v1) - 1 });
             //in >> s;
             
@@ -224,6 +235,29 @@ void TriangleMesh::loadOBJ(const char* filename) {
     calculateNormals();
 }
 
+void TriangleMesh::loadTexture(const char* filename) {
+    //unsigned int texture;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load and generate the texture
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        //glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+}
 // ==============
 // === RENDER ===
 // ==============
@@ -243,18 +277,26 @@ void TriangleMesh::draw(int& drawMode) {
 void TriangleMesh::drawImmediate() {
   if (triangles.size() == 0) return;
   // TODO: draw triangles with immediate mode
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+
   glBegin(GL_TRIANGLES);
   for (std::size_t i = 0; i < triangles.size(); i++) {
       glNormal3f(normals[triangles[i].x].x, normals[triangles[i].x].y, normals[triangles[i].x].z);
+      glTexCoord2f(textures[triTextures[i].x].first, textures[triTextures[i].x].second);
       glVertex3f(vertices[triangles[i].x].x, vertices[triangles[i].x].y, vertices[triangles[i].x].z);
      
       glNormal3f(normals[triangles[i].y].x, normals[triangles[i].y].y, normals[triangles[i].y].z);
+      glTexCoord2f(textures[triTextures[i].y].first, textures[triTextures[i].y].second);
       glVertex3f(vertices[triangles[i].y].x, vertices[triangles[i].y].y, vertices[triangles[i].y].z);
      
       glNormal3f(normals[triangles[i].z].x, normals[triangles[i].z].y, normals[triangles[i].z].z);
+      glTexCoord2f(textures[triTextures[i].z].first, textures[triTextures[i].z].second);
       glVertex3f(vertices[triangles[i].z].x, vertices[triangles[i].z].y, vertices[triangles[i].z].z);
   }
   glEnd();
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glDisable(GL_TEXTURE_2D);
 }
 
 void TriangleMesh::drawArray() {
