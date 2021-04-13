@@ -41,14 +41,19 @@ int main(int argc, char** argv) {
 	// load mesh // TODO: enter correct filename and Load OFF or LSA.
     //char* filename = "Modelle/delphin.off"; 
     //trimesh.loadOFF(filename); 
-	//char* filename = "Modelle/spiral_staircase_.obj";
+	char* filename1 = "Modelle/spiral_staircase_.obj";
 	char* filename = "Modelle/Medieval tower_High.obj";
 	char* texture = "Modelle/textures/Medieval tower_mid_Col.jpg";
 	//char* filename = "Modelle/bugatti.obj";
 	
-	trimesh.loadOBJ(filename);
+	/*trimesh.loadOBJ(filename);
 	unsigned int text_id;
 	trimesh.loadTexture(texture);
+	*/
+	meshObject.loadAddTriangleMesh(filename);
+	meshObject.loadAddTriangleMesh(filename1);
+
+	//meshObject.setPosition(0, 0, 20);
 
 
 	// activate main loop
@@ -170,8 +175,9 @@ void renderScene() {
 	glEnable(GL_LIGHTING);
 	glColor3f(1.0,1.0,1.0);
 	//glColor3f(0.2, 0.5, 0.8);
-	trimesh.draw(drawMode);
-  // swap buffers
+	//trimesh.draw();
+	meshObject.draw();
+	// swap buffers
 	glutSwapBuffers();
 }
 

@@ -15,6 +15,8 @@
 #include <GL/glut.h>      // openGL helper
 #include "Vec3.h"         // basic vector arithmetic class (embedded in std::)
 #include "TriangleMesh.h" // simple class for reading and rendering triangle meshes
+#include "MeshObject.h"		// Multiple TriangleMeshes in on Object
+
 
 using namespace std;
 
@@ -36,6 +38,7 @@ float mouseSensitivy;
 int drawMode;
 // object
 TriangleMesh trimesh;
+MeshObject meshObject;
 
 // ==============
 // === BASICS ===

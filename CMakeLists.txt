@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.8)
 project(PRAK1)
 
 # files of project
-add_executable(main main.h main.cpp TriangleMesh.h TriangleMesh.cpp Vec3.h)
+add_executable(main main.h main.cpp TriangleMesh.h TriangleMesh.cpp Vec3.h MeshObject.h MeshObject.cpp)
 
 option(AUTO_SEARCH_AND_INCLUDE_OpenGL "You can activate this option or include OpenGL by yourself" ON)
 option(AUTO_SEARCH_AND_INCLUDE_Glut "You can activate this option or include GLUT by yourself" ON)

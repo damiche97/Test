@@ -68,6 +68,7 @@ TriangleMesh::TriangleMesh() {
     shininess = 128.0f;
     specularLightMaterial = { 1.0f, 1.0f, 1.0f, 1.0f };
     shininessMaterial = 128.0f;
+    drawMode = 1;
 }
 
 TriangleMesh::~TriangleMesh() {
@@ -298,7 +299,7 @@ void TriangleMesh::draw_settings() {
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specularLightMaterial[0]);
 }
 
-void TriangleMesh::draw(int& drawMode) {
+void TriangleMesh::draw() {
     draw_settings();
     switch (drawMode)
     {

@@ -43,6 +43,7 @@ private:
   // Texture indices used for each triangle
   TriTextures triTextures;
   unsigned int textureID;
+  unsigned int drawMode;
 
   vector<GLfloat> global_ambient; // = { 0.1f, 0.1f, 0.1f, 1.0f };
   vector<GLfloat> ambientLight; // = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -51,8 +52,6 @@ private:
   vector<GLfloat> specularLightMaterial; // [] = { 1.0f, 1.0f, 1.0f, 1.0f };
   GLfloat shininessMaterial;
   GLfloat shininess;
-
-  
 
   // private methods
   void calculateNormals();
@@ -102,7 +101,7 @@ public:
   
   // draw mesh with set transformation
   void draw_settings();
-  void draw(int& drawMode);
+  void draw();
   void drawImmediate();
   void drawArray();
 
