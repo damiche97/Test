@@ -26,6 +26,32 @@
 // === CONSTRUCTOR, DESTRUCTOR ===
 // ===============================
 
+
+TriangleMesh::TriangleMesh() {
+    clear();
+    // set lighting and material
+    /*
+    GLfloat global_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat shininess;
+    */
+    position = { 0.f,0.f,0.f };
+    global_ambient = { 0.1f, 0.1f, 0.1f, 0.1f };
+    ambientLight = { 0.1f, 0.1f, 0.1f, 0.1f };
+    diffuseLight = { 1.0f, 1.0f, 1.0f, 1.0f };
+    specularLight = { 1.0f, 1.0f, 1.0f, 1.0f };
+    shininess = 128.0f;
+    specularLightMaterial = { 1.0f, 1.0f, 1.0f, 1.0f };
+    shininessMaterial = 128.0f;
+    drawMode = 1;
+}
+
+TriangleMesh::~TriangleMesh() {
+  clear();
+}
+
 void TriangleMesh::calculateNormals() {
   normals.resize(vertices.size());
   // TODO: calculate normals for each vertex
@@ -49,30 +75,6 @@ void TriangleMesh::calculateNormals() {
      //the normalize() function returns a boolean which can be used if you want to check for erroneous normals
 	 (*nit).normalize();
    }
-}
-
-TriangleMesh::TriangleMesh() {
-    clear();
-    // set lighting and material
-    /*
-    GLfloat global_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    GLfloat ambientLight[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    GLfloat diffuseLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat shininess;
-    */
-    global_ambient = { 0.1f, 0.1f, 0.1f, 0.1f };
-    ambientLight = { 0.1f, 0.1f, 0.1f, 0.1f };
-    diffuseLight = { 1.0f, 1.0f, 1.0f, 1.0f };
-    specularLight = { 1.0f, 1.0f, 1.0f, 1.0f };
-    shininess = 128.0f;
-    specularLightMaterial = { 1.0f, 1.0f, 1.0f, 1.0f };
-    shininessMaterial = 128.0f;
-    drawMode = 1;
-}
-
-TriangleMesh::~TriangleMesh() {
-  clear();
 }
 
 void TriangleMesh::clear() {
@@ -101,6 +103,22 @@ void TriangleMesh::flipNormals() {
   for (Normals::iterator it = normals.begin(); it != normals.end(); ++it) {
     (*it) *= -1.0;
   }
+}
+
+void TriangleMesh::setPosition(float x, float y, float z) {
+    position.x = x;
+    position.y = y;
+    position.z = z;
+}
+
+void TriangleMesh::switchDrawMode()
+{
+    drawMode += 1;
+    if (drawMode >= 2)
+    {
+        drawMode = 0;
+    }
+    std::cout << "drawMode switched to " << drawMode << std::endl;
 }
 
 // =================
@@ -188,6 +206,15 @@ void TriangleMesh::loadOFF(const char* filename) {
 }
 
 void TriangleMesh::loadOBJ(const char* filename) {
+    // Storing the local possible texture coordinates
+    /*struct Tex2D
+    {
+        float u, v;
+    };*/
+    vector<Tex2D> localTexCoords;
+    vector<Vec3f> localVertices;
+    vector<Vec3f> localNormals;
+	
     std::ifstream in(filename);
     if (!in.is_open()) {
         std::cout << "loadOBJ: can not find " << filename << endl;
@@ -202,7 +229,9 @@ void TriangleMesh::loadOBJ(const char* filename) {
             in >> vx;
             in >> vy;
             in >> vz;
-            vertices.push_back(Vertex{ vx,vy,vz });
+            localVertices.push_back(Vertex{ vx,vy,vz });
+            //localVertices.emplace_back(Vertex{ vx,vy,vz });
+            
             //std::cout << "vertex detected" << endl;
         }
         else if (block == "vn") {
@@ -210,6 +239,7 @@ void TriangleMesh::loadOBJ(const char* filename) {
             in >> nx;
             in >> ny;
             in >> nz;
+            localNormals.push_back(Vertex{ nx,ny,nz });
             //vertices.push_back(Vertex{ nx,ny,nz });
             // muss überarbeitet werden
         }
@@ -217,7 +247,8 @@ void TriangleMesh::loadOBJ(const char* filename) {
             float u, v;
             in >> u;
             in >> v;
-            textures.push_back({ u, v });
+            localTexCoords.push_back(Tex2D{ u,v });
+            //textures.push_back({ u, v });
         }
         else if (block == "f") {
             //string v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3;
@@ -240,9 +271,23 @@ void TriangleMesh::loadOBJ(const char* filename) {
             //std::getline(in, v4, '/');
             //std::getline(in, vt4, '/');
             //std::getline(in, vn4);
+        	
+            vertices.push_back(localVertices[std::stoi(v1) - 1]);
+            vertices.push_back(localVertices[std::stoi(v2) - 1]);
+            vertices.push_back(localVertices[std::stoi(v3) - 1]);
+            normals.push_back(localNormals[std::stoi(vn1) - 1]);
+            normals.push_back(localNormals[std::stoi(vn2) - 1]);
+            normals.push_back(localNormals[std::stoi(vn3) - 1]);
+        	
+            textures.push_back(localTexCoords[std::stoi(vt1) - 1]);
+            textures.push_back(localTexCoords[std::stoi(vt2) - 1]);
+            textures.push_back(localTexCoords[std::stoi(vt3) - 1]);
+        	
+            //triangles.push_back(Triangle{ std::stoi(v1) - 1,std::stoi(v2) - 1,std::stoi(v3) - 1 });
+            triangles.push_back(Triangle{ (int)vertices.size() - 3, (int)vertices.size() - 2, (int)vertices.size() - 1 });
+
+        	//triTextures.push_back(Vec3i{ std::stoi(vt1) - 1,std::stoi(vt2) - 1,std::stoi(vt3) - 1 });
             
-            triangles.push_back(Triangle{ std::stoi(v1) - 1,std::stoi(v2) - 1,std::stoi(v3) - 1 });
-            triTextures.push_back(Vec3i{ std::stoi(vt1) - 1,std::stoi(vt2) - 1,std::stoi(vt3) - 1 });
             //triangles.push_back(Triangle{ std::stoi(v3) - 1,std::stoi(v4) - 1,std::stoi(v1) - 1 });
             //in >> s;
             
@@ -301,6 +346,8 @@ void TriangleMesh::draw_settings() {
 
 void TriangleMesh::draw() {
     draw_settings();
+    glPushMatrix();
+    glTranslatef(position.x, position.y, position.z);
     switch (drawMode)
     {
     case 0:
@@ -310,6 +357,7 @@ void TriangleMesh::draw() {
     default:
         break;
     }
+    glPopMatrix();
 }
 
 void TriangleMesh::drawImmediate() {
@@ -320,16 +368,16 @@ void TriangleMesh::drawImmediate() {
 
   glBegin(GL_TRIANGLES);
   for (std::size_t i = 0; i < triangles.size(); i++) {
-      glNormal3f(normals[triangles[i].x].x, normals[triangles[i].x].y, normals[triangles[i].x].z);
-      glTexCoord2f(textures[triTextures[i].x].first, textures[triTextures[i].x].second);
+      glNormal3f(normals[3*i].x, normals[3*i].y, normals[3*i].z);
+      glTexCoord2f(textures[3*i].u, textures[3*i].v);
       glVertex3f(vertices[triangles[i].x].x, vertices[triangles[i].x].y, vertices[triangles[i].x].z);
      
-      glNormal3f(normals[triangles[i].y].x, normals[triangles[i].y].y, normals[triangles[i].y].z);
-      glTexCoord2f(textures[triTextures[i].y].first, textures[triTextures[i].y].second);
+      glNormal3f(normals[3*i+1].x, normals[3*i+1].y, normals[3*i+1].z);
+  	  glTexCoord2f(textures[3 * i + 1].u, textures[3 * i + 1].v);
       glVertex3f(vertices[triangles[i].y].x, vertices[triangles[i].y].y, vertices[triangles[i].y].z);
      
-      glNormal3f(normals[triangles[i].z].x, normals[triangles[i].z].y, normals[triangles[i].z].z);
-      glTexCoord2f(textures[triTextures[i].z].first, textures[triTextures[i].z].second);
+      glNormal3f(normals[3*i + 2].x, normals[3*i + 2].y, normals[3*i + 2].z);
+  	  glTexCoord2f(textures[3 * i + 2].u, textures[3 * i + 2].v);
       glVertex3f(vertices[triangles[i].z].x, vertices[triangles[i].z].y, vertices[triangles[i].z].z);
   }
   glEnd();
@@ -341,13 +389,23 @@ void TriangleMesh::drawArray() {
     // Enabling Drawing Arrays
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureID);
     // Pointers to the vertices and normals data
-    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), vertices.data());
+    /*glVertexPointer(3, GL_FLOAT, sizeof(Vertex), vertices.data());
     glNormalPointer(GL_FLOAT, sizeof(Normal), normals.data());
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Tex2D), textures.data());*/
+    glVertexPointer(3, GL_FLOAT, 0, &vertices[0]);
+    glNormalPointer(GL_FLOAT, 0, &normals[0]);
+    glTexCoordPointer(2, GL_FLOAT, 0, &textures[0]); 
     // drawing the elements
-    glDrawElements(GL_TRIANGLES, triangles.size()*3, GL_UNSIGNED_INT, triangles.data());
+    glDrawElements(GL_TRIANGLES, triangles.size()*3, GL_UNSIGNED_INT, &triangles[0]);
 
     // We disable normal and vertex arrays again
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
+    glDisable(GL_TEXTURE_2D);
 }

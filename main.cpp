@@ -52,6 +52,7 @@ int main(int argc, char** argv) {
 	*/
 	meshObject.loadAddTriangleMesh(filename);
 	meshObject.loadAddTriangleMesh(filename1);
+	
 
 	//meshObject.setPosition(0, 0, 20);
 
@@ -211,12 +212,7 @@ void keyPressed(unsigned char key, int x, int y) {
 		break;
 	case 'm':
 	case 'M':
-		drawMode += 1;
-		if (drawMode >= 2)
-		{
-			drawMode = 0;
-		}
-		std::cout << "drawMode switched to " << drawMode << std::endl;
+		break;
 	}
 }
 

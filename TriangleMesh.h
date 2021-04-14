@@ -31,7 +31,9 @@ private:
   typedef vector<Triangle> Triangles;
   typedef vector<Normal> Normals;
   typedef vector<Vertex> Vertices;  
-  typedef vector<pair<float, float>> Textures;
+  //typedef vector<pair<float, float>> Textures;
+  struct Tex2D { float u, v; };
+  typedef vector<Tex2D> Textures;
   typedef vector<Vec3i> TriTextures;
 
   // data of TriangleMesh
@@ -44,6 +46,8 @@ private:
   TriTextures triTextures;
   unsigned int textureID;
   unsigned int drawMode;
+  // Local Position translation of triangle mesh
+  Vec3f position;
 
   vector<GLfloat> global_ambient; // = { 0.1f, 0.1f, 0.1f, 1.0f };
   vector<GLfloat> ambientLight; // = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -79,6 +83,9 @@ public:
 
   // flip all normals
   void flipNormals();
+
+  void TriangleMesh::setPosition(float x, float y, float z);
+  void switchDrawMode();
 
   // =================
   // === LOAD MESH ===

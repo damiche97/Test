@@ -16,6 +16,9 @@ MeshObject::MeshObject(float x, float y, float z) {
 
 MeshObject::~MeshObject()
 {
+	for (TriangleMesh& t : triangleMeshes) {
+		t.clear();
+	}
 }
 
 void MeshObject::addTriangleMesh(TriangleMesh* Mesh)
@@ -26,6 +29,8 @@ void MeshObject::loadAddTriangleMesh(const char* filename)
 {
 	TriangleMesh a = TriangleMesh();
 	a.loadOBJ(filename);
+	char* texture = "Modelle/textures/Medieval tower_mid_Col.jpg";
+	a.loadTexture(texture);
 	triangleMeshes.push_back(a);
 	//triangleMeshes[triangleMeshes.size() - 1].loadOBJ(filename);
 }
