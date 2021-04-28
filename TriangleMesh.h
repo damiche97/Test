@@ -3,7 +3,7 @@
 // mailto:roman.getto@gris.informatik.tu-darmstadt.de                        //
 //                                                                           //
 // GRIS - Graphisch Interaktive Systeme                                      //
-// Technische Universität Darmstadt                                          //
+// Technische Universitï¿½t Darmstadt                                          //
 // Fraunhoferstrasse 5                                                       //
 // D-64283 Darmstadt, Germany                                                //
 //                                                                           //
@@ -84,7 +84,7 @@ public:
   // flip all normals
   void flipNormals();
 
-  void TriangleMesh::setPosition(float x, float y, float z);
+  void setPosition(float x, float y, float z);
   void switchDrawMode();
 
   // =================
@@ -100,7 +100,7 @@ public:
   // read OBJ file
   void loadOBJ(const char* filename);
 
-  void TriangleMesh::loadTexture(const char* filename);
+  void loadTexture(const char* filename);
 
   // ==============
   // === RENDER ===

@@ -14,13 +14,13 @@ public:
 	MeshObject(float x, float y, float z);
 	~MeshObject();
 
-	void MeshObject::addTriangleMesh(TriangleMesh* Mesh);
-	void MeshObject::loadAddTriangleMesh(const char* filename);
-	void MeshObject::load(const char* filename);
-	void MeshObject::load_tex(const char* filename);
+	void addTriangleMesh(TriangleMesh* Mesh);
+	void loadAddTriangleMesh(const char* filename);
+	void load(const char* filename);
+	void load_tex(const char* filename);
 
-	void MeshObject::draw();
-	void MeshObject::setPosition(float x, float y, float z);
+	void draw();
+	void setPosition(float x, float y, float z);
 
 private:
 	vector<TriangleMesh> triangleMeshes;
